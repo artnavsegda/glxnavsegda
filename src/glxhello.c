@@ -11,6 +11,8 @@ static int dblBuf[] =  {GLX_RGBA, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_S
 
 int main(int argc, char **argv)
 {
+	int x = 10;
+	int y = 10;
 	char buf[100];
 	Display *dpy;
 	Window win;
@@ -50,21 +52,41 @@ int main(int argc, char **argv)
 			glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
 			glLoadIdentity();
 			gluOrtho2D(0.0,(GLdouble)event.xconfigure.width,0.0,(GLdouble)event.xconfigure.height);
-		case Expose:
-			glClear(GL_COLOR_BUFFER_BIT);
-			glRectf(10,10,20,20);
-			glEnd();
-			glXSwapBuffers(dpy, win);
-			glFlush();          
 			break;
 		case KeyPress:
 			XLookupString(&event.xkey,buf,100,NULL,NULL);
-			printf("keypress %s\n",buf);
-			if (XK_q == XLookupKeysym (&event.xkey, 0))
+			//printf("keypress %s\n",buf);
+			switch(XLookupKeysym (&event.xkey, 0))
+			{
+			case XK_q:
+				XCloseDisplay(dpy);
+				exit(0);
+				break;
+			case XK_Left:
+				x++;
+				break;
+			case XK_Right:
+				x--;
+				break;
+			case XK_Up:
+				y++;
+				break;
+			case XK_Down:
+				y--;
+				break;
+			}
+			/*if (XK_q == XLookupKeysym (&event.xkey, 0))
 			{
 				XCloseDisplay(dpy);
 				exit(0);
-			}
+			}*/
+			//break;
+		case Expose:
+			glClear(GL_COLOR_BUFFER_BIT);
+			glRectf(x,y,x+10,y+10);
+			glEnd();
+			glXSwapBuffers(dpy, win);
+			glFlush();          
 			break;
 		case ClientMessage:
 			XCloseDisplay(dpy);
