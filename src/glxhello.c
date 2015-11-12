@@ -10,6 +10,7 @@ static int dblBuf[] =  {GLX_RGBA, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_S
 
 int main(int argc, char **argv)
 {
+	char buf[100];
 	Display *dpy;
 	Window win;
 	XVisualInfo *vi;
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
 	win = XCreateWindow(dpy, RootWindow(dpy, vi->screen), 0, 0, 300, 300, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
 	XSetStandardProperties(dpy, win, "glxsimple", "glxsimple", None, argv, argc, NULL);
 	glXMakeCurrent(dpy, win, cx);
-	XSelectInput(dpy, win, ExposureMask | ButtonPressMask | StructureNotifyMask);
+	XSelectInput(dpy, win, ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask);
 	XMapWindow(dpy, win);
 	Atom WM_DELETE_WINDOW = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(dpy, win, &WM_DELETE_WINDOW, 1);
@@ -44,19 +45,30 @@ int main(int argc, char **argv)
 		XNextEvent(dpy, &event);
 		switch (event.type)
 		{
-      			case ConfigureNotify:
-				glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
-			case Expose:
-				glClear(GL_COLOR_BUFFER_BIT);
-				glRectf(-0.5,0.5,0.5,-0.5);
-				glEnd();
-				glXSwapBuffers(dpy, win);
-				glFlush();          
-				break;
-			case ClientMessage:
+      		case ConfigureNotify:
+			glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
+		case Expose:
+			glClear(GL_COLOR_BUFFER_BIT);
+			glRectf(-0.5,0.5,0.5,-0.5);
+			glEnd();
+			glXSwapBuffers(dpy, win);
+			glFlush();          
+			break;
+		case KeyPress:
+			XLookupString(&event.xkey,buf,100,NULL,NULL);
+			printf("keypress %s\n",buf);
+			if (XK_q == XLookupKeysym (&event.xkey, 0))
+			{
 				XCloseDisplay(dpy);
 				exit(0);
-				break;
+			}
+			break;
+		case ClientMessage:
+			XCloseDisplay(dpy);
+			exit(0);
+			break;
+		case ButtonPress:
+			break;
 		}
 	}
 	return 0;
