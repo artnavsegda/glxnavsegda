@@ -5,6 +5,7 @@
 #include <GL/glxew.h>
 #include <GL/glx.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 static int dblBuf[] =  {GLX_RGBA, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, GLX_DEPTH_SIZE, 12, GLX_DOUBLEBUFFER, None};
 
@@ -47,9 +48,11 @@ int main(int argc, char **argv)
 		{
       		case ConfigureNotify:
 			glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
+			glLoadIdentity();
+			gluOrtho2D(0.0,(GLdouble)event.xconfigure.width,0.0,(GLdouble)event.xconfigure.height);
 		case Expose:
 			glClear(GL_COLOR_BUFFER_BIT);
-			glRectf(-0.5,0.5,0.5,-0.5);
+			glRectf(10,10,20,20);
 			glEnd();
 			glXSwapBuffers(dpy, win);
 			glFlush();          

@@ -4,6 +4,7 @@ AC_MSG_NOTICE([Art Navsegda])
 AC_PROG_CC
 AC_CHECK_LIB([X11],[XCreateWindow])
 AC_CHECK_LIB([GL],[glXCreateContext])
+AC_CHECK_LIB([GLU],[gluOrtho2D])
 AC_CHECK_LIB([GLEW],[glewInit])
 #PKG_CHECK_MODULES(XHELLO, [x11])
 AC_CONFIG_HEADERS([config.h])
