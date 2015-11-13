@@ -63,30 +63,34 @@ int main(int argc, char **argv)
 				exit(0);
 				break;
 			case XK_Left:
-				x++;
+				//x++;
+				glTranslatef(-10.0,0.0,0.0);
 				break;
 			case XK_Right:
-				x--;
+				//x--;
+				glTranslatef(10.0,0.0,0.0);
 				break;
 			case XK_Up:
-				y++;
+				//y++;
+				glTranslatef(0.0,10.0,0.0);
 				break;
 			case XK_Down:
-				y--;
+				//y--;
+				glTranslatef(0.0,-10.0,0.0);
 				break;
 			}
-			/*if (XK_q == XLookupKeysym (&event.xkey, 0))
-			{
-				XCloseDisplay(dpy);
-				exit(0);
-			}*/
 			//break;
 		case Expose:
 			glClear(GL_COLOR_BUFFER_BIT);
-			glRectf(x,y,x+10,y+10);
-			glEnd();
+			glPushMatrix();
+			glLoadIdentity();
+			//glRectf(x,y,x+10,y+10);
+			//glRectf(10,10,20,20);
+			glRectf(0.5,0.5,0.7,0.7);
+			glPopMatrix();
+			//glEnd();
 			glXSwapBuffers(dpy, win);
-			glFlush();          
+			//glFlush();          
 			break;
 		case ClientMessage:
 			XCloseDisplay(dpy);

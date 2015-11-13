@@ -9,6 +9,10 @@
 
 int main(int argc, char *argv[])
 {
+	int x = 10;
+	int y = 10;
+	char buf[100];
+	static GLfloat spin = 0.0;
 	int dblBuf[] =  {GLX_RGBA, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, GLX_DEPTH_SIZE, 12, GLX_DOUBLEBUFFER, None};
 	XSetWindowAttributes swa;
 	XEvent event;
@@ -22,7 +26,7 @@ int main(int argc, char *argv[])
 	Window win = XCreateWindow(dpy, RootWindow(dpy, vi->screen), 0, 0, 300, 300, 0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &swa);
 	XSetStandardProperties(dpy, win, "glxsimple", "glxsimple", None, argv, argc, NULL);
 	glXMakeCurrent(dpy, win, cx);
-	XSelectInput(dpy, win, StructureNotifyMask);
+	XSelectInput(dpy, win, KeyPressMask | StructureNotifyMask);
 	XMapWindow(dpy, win);
 	Atom WM_DELETE_WINDOW = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(dpy, win, &WM_DELETE_WINDOW, 1);
@@ -51,6 +55,36 @@ int main(int argc, char *argv[])
 			{
 	      		case ConfigureNotify:
 				glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
+				glLoadIdentity();
+				//gluOrtho2D(0.0,(GLdouble)event.xconfigure.width,0.0,(GLdouble)event.xconfigure.height);
+				gluOrtho2D((GLdouble)event.xconfigure.width/-2,(GLdouble)event.xconfigure.width/2,(GLdouble)event.xconfigure.height/-2,(GLdouble)event.xconfigure.height/2);
+				break;
+			case KeyPress:
+				XLookupString(&event.xkey,buf,100,NULL,NULL);
+				//printf("keypress %s\n",buf);
+				switch(XLookupKeysym (&event.xkey, 0))
+				{
+				case XK_q:
+					XCloseDisplay(dpy);
+					exit(0);
+					break;
+				case XK_Left:
+					x++;
+					glTranslatef(-1.0,0.0,0.0);
+					break;
+				case XK_Right:
+					x--;
+					glTranslatef(1.0,0.0,0.0);
+					break;
+				case XK_Up:
+					y++;
+					glTranslatef(0.0,1.0,0.0);
+					break;
+				case XK_Down:
+					y--;
+					glTranslatef(0.0,-1.0,0.0);
+					break;
+				}
 				break;
 			case ClientMessage:
 				XCloseDisplay(dpy);
@@ -58,24 +92,33 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+		spin = spin + 1.0;
+		if (spin > 360.0)
+			spin = spin - 360.0;
+
 		glClear(GL_COLOR_BUFFER_BIT);
-		glRotatef(1.0,0.0,0.0,1.0);
-		glRasterPos2f(-0.5,-0.5);
+		//glRotatef(1.0,0.0,0.0,1.0);
+		glPushMatrix();
+		//glLoadIdentity();
+		glRotatef(spin,0.0,0.0,1.0);
+		/*glRasterPos2f(-0.5,-0.5);
 		glCallLists(3, GL_UNSIGNED_BYTE,(GLubyte *)"one");
 		glRasterPos2f(-0.5,0.5);
 		glCallLists(3, GL_UNSIGNED_BYTE,(GLubyte *)"day");
 		glRasterPos2f(0.5,0.5);
 		glCallLists(7, GL_UNSIGNED_BYTE,(GLubyte *)"it goes");
 		glRasterPos2f(0.5,-0.5);
-		glCallLists(4, GL_UNSIGNED_BYTE,(GLubyte *)"away");
+		glCallLists(4, GL_UNSIGNED_BYTE,(GLubyte *)"away");*/
 
 		//glRectf(-0.5,0.5,0.5,-0.5);
-		glBegin(GL_LINE_LOOP);
+		glRectf(-75,75,75,-75);
+		/*glBegin(GL_LINE_LOOP);
 			glVertex2f(-0.5,-0.5);
 			glVertex2f(-0.5,0.5);
 			glVertex2f(0.5,0.5);
 			glVertex2f(0.5,-0.5);
-		glEnd();
+		glEnd();*/
+		glPopMatrix();
 
 		glXSwapBuffers(dpy, win);
 		glFlush();          
