@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 			glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
 			glLoadIdentity();
 			gluOrtho2D(0.0,(GLdouble)event.xconfigure.width,0.0,(GLdouble)event.xconfigure.height);
-			break;
+			//break;
 		case KeyPress:
 			XLookupString(&event.xkey,buf,100,NULL,NULL);
 			//printf("keypress %s\n",buf);
@@ -143,6 +143,38 @@ int main(int argc, char **argv)
 				break;
 			}
 			//break;
+		case ButtonPress:
+			switch(event.xbutton.button)
+			{
+			case Button4:
+				if (event.xbutton.state & ControlMask)
+					xscale = xscale*2.0;
+				else if (event.xbutton.state & ShiftMask)
+				{
+					if ((   (l-xspan)   *xscale)     > xwidth)
+						xspan=xspan+(10.0/xscale);
+				}
+				else
+					glTranslatef(0.0,10.0,0.0);
+				printf("wheel up\n");
+				break;
+			case Button5:
+				if (event.xbutton.state & ControlMask)
+					if (xscale/2.0>(double)xwidth/l)
+						xscale = xscale/2.0;
+					else
+						xscale = (double)xwidth/l;
+				else if (event.xbutton.state & ShiftMask)
+				{
+					if (xspan-(10.0/xscale)>=0)
+						xspan=xspan-(10.0/xscale);
+				}
+				else
+					glTranslatef(0.0,-10.0,0.0);
+				printf("wheel down\n");
+				break;
+			}
+			//break;
 		case Expose:
 			glClear(GL_COLOR_BUFFER_BIT);
 			//scale matrix
@@ -175,8 +207,6 @@ int main(int argc, char **argv)
 		case ClientMessage:
 			XCloseDisplay(dpy);
 			exit(0);
-			break;
-		case ButtonPress:
 			break;
 		}
 	}
