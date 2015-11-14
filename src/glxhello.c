@@ -78,6 +78,9 @@ int main(int argc, char **argv)
 				//y--;
 				glTranslatef(0.0,-10.0,0.0);
 				break;
+			case XK_2:
+				glScalef(2.0,1.0,1.0);
+				break;
 			}
 			//break;
 		case Expose:

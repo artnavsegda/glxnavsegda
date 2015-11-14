@@ -9,8 +9,11 @@
 
 int main(int argc, char *argv[])
 {
-	int x = 10;
-	int y = 10;
+	int xwidth, yheight;
+	int x = 0;
+	int y = 0;
+	float xs = 1.0;
+	float ys = 1.0;
 	char buf[100];
 	static GLfloat spin = 0.0;
 	int dblBuf[] =  {GLX_RGBA, GLX_RED_SIZE, 1, GLX_GREEN_SIZE, 1, GLX_BLUE_SIZE, 1, GLX_DEPTH_SIZE, 12, GLX_DOUBLEBUFFER, None};
@@ -54,6 +57,9 @@ int main(int argc, char *argv[])
 			switch (event.type)
 			{
 	      		case ConfigureNotify:
+				xwidth = event.xconfigure.width;
+				yheight = event.xconfigure.height;
+				printf("width %d, height %d\n",xwidth,yheight);
 				glViewport(0, 0, event.xconfigure.width, event.xconfigure.height);
 				glLoadIdentity();
 				//gluOrtho2D(0.0,(GLdouble)event.xconfigure.width,0.0,(GLdouble)event.xconfigure.height);
@@ -70,19 +76,39 @@ int main(int argc, char *argv[])
 					break;
 				case XK_Left:
 					x++;
-					glTranslatef(-1.0,0.0,0.0);
+					//glTranslatef(-1.0,0.0,0.0);
+					printf("x position %d\n",x);
 					break;
 				case XK_Right:
 					x--;
-					glTranslatef(1.0,0.0,0.0);
+					//glTranslatef(1.0,0.0,0.0);
+					printf("x position %d\n",x);
 					break;
 				case XK_Up:
 					y++;
-					glTranslatef(0.0,1.0,0.0);
+					//glTranslatef(0.0,1.0,0.0);
+					printf("y position %d\n",y);
 					break;
 				case XK_Down:
 					y--;
-					glTranslatef(0.0,-1.0,0.0);
+					//glTranslatef(0.0,-1.0,0.0);
+					printf("y position %d\n",y);
+					break;
+				case XK_2:
+					//glScalef(2.0,1.0,1.0);
+					xs = xs*2;
+					break;
+				case XK_1:
+					//glScalef(0.5,1.0,1.0);
+					xs = xs/2;
+					break;
+				case XK_4:
+					//glScalef(2.0,1.0,1.0);
+					ys = ys*2;
+					break;
+				case XK_3:
+					//glScalef(0.5,1.0,1.0);
+					ys = ys/2;
 					break;
 				}
 				break;
@@ -97,7 +123,14 @@ int main(int argc, char *argv[])
 			spin = spin - 360.0;
 
 		glClear(GL_COLOR_BUFFER_BIT);
+		//translate matrix
+		glPushMatrix();
+		glTranslatef(x,y,0.0);
+		//scale matrix
+		glPushMatrix();
+		glScalef(xs,ys,1.0);
 		//glRotatef(1.0,0.0,0.0,1.0);
+		//rotate matrix
 		glPushMatrix();
 		//glLoadIdentity();
 		glRotatef(spin,0.0,0.0,1.0);
@@ -111,13 +144,15 @@ int main(int argc, char *argv[])
 		glCallLists(4, GL_UNSIGNED_BYTE,(GLubyte *)"away");*/
 
 		//glRectf(-0.5,0.5,0.5,-0.5);
-		glRectf(-75,75,75,-75);
-		/*glBegin(GL_LINE_LOOP);
-			glVertex2f(-0.5,-0.5);
-			glVertex2f(-0.5,0.5);
-			glVertex2f(0.5,0.5);
-			glVertex2f(0.5,-0.5);
-		glEnd();*/
+		//glRectf(-75,75,75,-75);
+		glBegin(GL_LINE_LOOP);
+			glVertex2f(-75,-75);
+			glVertex2f(-75,75);
+			glVertex2f(75,75);
+			glVertex2f(75,-75);
+		glEnd();
+		glPopMatrix();
+		glPopMatrix();
 		glPopMatrix();
 
 		glXSwapBuffers(dpy, win);
