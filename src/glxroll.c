@@ -168,8 +168,11 @@ int main(int argc, char *argv[])
 			glVertex2f(-75,75);
 			glVertex2f(75,75);
 			glVertex2f(75,-75);*/
-			for (int i=0; i<xwidth ; i++)
-				glVertex2f(i,roll[i]);
+			int i;
+			for (i=0; rollpos-i>0 ; i++)
+				glVertex2f(i,roll[rollpos-i]);
+			for (;i<xwidth; i++)
+				glVertex2f(i,roll[rollpos-i+xwidth]);
 		glEnd();
 		glPopMatrix();
 		glPopMatrix();
