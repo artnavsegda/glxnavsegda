@@ -1,7 +1,7 @@
 AC_INIT([ArtNavsegda], [1.0], [artnavsegda@gmail.com],[artnavsegda],[https://github.com/artnavsegda])
 AM_INIT_AUTOMAKE
 AC_MSG_NOTICE([Art Navsegda])
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_CHECK_LIB([X11],[XCreateWindow])
 AC_CHECK_LIB([GL],[glXCreateContext])
 AC_CHECK_LIB([GLU],[gluOrtho2D])
