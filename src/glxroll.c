@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
 	int rollpos = 0;
 	int roll[3000];
-	memset(roll,0,3000);
+	memset(roll,0,sizeof(int)*3000);
 	int incomdata = 0;
 	char incomstring[10];
 	int xwidth, yheight;
